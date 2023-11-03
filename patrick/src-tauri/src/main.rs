@@ -31,9 +31,11 @@ lazy_static! {
 
 #[tauri::command]
 fn celestia_start() -> Result<String, tauri::InvokeError> {
-  let mut child = Command::new("./celestia")
-    .arg("light")
-    .arg("start")
+  let output_file = "/.celestia-light/logs.txt";
+
+  let mut child = Command::new("sh")
+    .arg("-c")
+    .arg(format!("./celestia light start 2>&1 | tee {}", output_file))
     .stdout(Stdio::piped())
     .spawn()
     .map_err(|e| tauri::InvokeError::from(e.to_string()))?;
@@ -43,8 +45,9 @@ fn celestia_start() -> Result<String, tauri::InvokeError> {
   let output_arc = Arc::clone(&OUTPUT);
   thread::spawn(move || {
     for line in reader.lines() {
+      let line = line.unwrap();
       let mut output = output_arc.lock().unwrap();
-      output.push(line.unwrap());
+      output.push(line);
     }
   });
 
