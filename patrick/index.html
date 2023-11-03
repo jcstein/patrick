@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patrick</title>
+    <script type="module" src="/src/main.ts" defer></script>
+    <style>
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Welcome to Patrick!</h1>
+
+      <div class="row">
+        <a href="https://celestia.org" target="_blank">
+          <img
+            src="/src/assets/celestia.svg"
+            class="logo celestia"
+            alt="Celestia logo"
+          />
+        </a>
+      </div>
+
+      <p>Click on the Celestia logo to learn more</p>
+
+      <div style="display: flex; justify-content: center;">
+        <button id="run-celestia" style="margin-right: 10px;">Check version</button>
+        <button id="init-celestia" style="margin-right: 10px;">Initialize light node</button>
+        <button id="start-celestia" style="margin-right: 10px;">Start light node</button>
+        <button id="clearLogs">Clear Logs</button>
+      </div>
+      
+      <div style="width: 100%; overflow: auto; white-space: pre-wrap; max-height: 200px; overflow-y: auto;">
+        <pre id="celestia-logs"></pre>
+      </div>
+
+    </div>
+  </body>
+</html>
