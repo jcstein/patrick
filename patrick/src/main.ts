@@ -20,7 +20,12 @@ async function celestiaInit() {
   }
 }
 
+let isRunning = false;
+let shouldUpdateLogs = true;
+
 async function celestiaStart() {
+  isRunning = true;
+  shouldUpdateLogs = true;
   await invoke("celestia_start");
   if (celestiaLogsEl) {
     celestiaLogsEl.style.textAlign = 'left';
@@ -29,9 +34,9 @@ async function celestiaStart() {
   }
 
   // Start a loop to continuously get the latest output
-  while (true) {
+  while (isRunning) {
     const output = (await invoke("get_output")) as string[];
-    if (celestiaLogsEl) {
+    if (celestiaLogsEl && shouldUpdateLogs) {
       celestiaLogsEl.textContent += output.join('\n') + '\n';
       celestiaLogsEl.scrollIntoView(false);
     }
@@ -51,10 +56,22 @@ window.addEventListener("DOMContentLoaded", () => {
   // Add event listener for the "Start light node" button
   document.querySelector("#start-celestia")?.addEventListener("click", celestiaStart);
 
+  // Add event listener for the "Stop" button
+  document.querySelector("#stop-celestia")?.addEventListener("click", async () => {
+    const message = await invoke("celestia_stop");
+    isRunning = false;
+    if (celestiaLogsEl) {
+      celestiaLogsEl.style.textAlign = 'left';
+      celestiaLogsEl.textContent += `Stopping Celestia light node...\n${message}\n`;
+      celestiaLogsEl.scrollIntoView(false);
+    }
+  });
+  
   // Add event listener for the "Clear Logs" button
   document.querySelector("#clearLogs")?.addEventListener("click", () => {
     if (celestiaLogsEl) {
       celestiaLogsEl.textContent = '';
+      shouldUpdateLogs = false;
     }
   });
 });

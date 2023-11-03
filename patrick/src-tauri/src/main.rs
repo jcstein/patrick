@@ -3,6 +3,25 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::io::{BufRead, BufReader};
 use lazy_static::lazy_static;
+use sysinfo::{System, SystemExt, ProcessExt};
+
+fn kill_process_by_name(name: &str) -> Result<(), String> {
+    let mut system = System::new_all();
+    system.refresh_all();
+
+    for (pid, process) in system.processes() {
+        if process.name() == name {
+            std::process::Command::new("kill")
+                .arg("-9")
+                .arg(pid.to_string())
+                .output()
+                .expect("failed to execute process");
+            return Ok(());
+        }
+    }
+
+    Err(format!("No process with name {} found", name))
+}
 
 #[tauri::command]
 fn celestia_version() -> String {
@@ -60,9 +79,17 @@ fn get_output() -> Result<Vec<String>, tauri::InvokeError> {
   Ok(output)
 }
 
+#[tauri::command]
+fn celestia_stop() -> Result<String, tauri::InvokeError> {
+    match kill_process_by_name("celestia") {
+        Ok(_) => Ok("Celestia light node successfully stopped".to_string()),
+        Err(e) => Err(tauri::InvokeError::from(e)),
+    }
+}
+
 fn main() {
   tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![celestia_version, celestia_init, celestia_start, get_output])
+      .invoke_handler(tauri::generate_handler![celestia_version, celestia_init, celestia_start, get_output, celestia_stop])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
 }
