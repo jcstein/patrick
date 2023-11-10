@@ -3,8 +3,7 @@
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run build",
     "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": true
+    "distDir": "../dist"
   },
   "package": {
     "productName": "patrick",
@@ -21,15 +20,14 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "bio.jcs.patrick",
+      "identifier": "com.tauri.dev",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ],
-      "resources": ["celestia"]
+      ]
     },
     "security": {
       "csp": null
@@ -38,7 +36,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Patrick",
+        "title": "patrick",
         "width": 800,
         "height": 600
       }

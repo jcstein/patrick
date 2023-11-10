@@ -50,11 +50,28 @@ lazy_static! {
 
 #[tauri::command]
 fn celestia_start() -> Result<String, tauri::InvokeError> {
-  let output_file = "/.celestia-light/logs.txt";
+  let home_dir = dirs::home_dir().ok_or("Could not get home directory")?;
+  let output_dir = home_dir.join(".celestia-light");
+  let output_file = output_dir.join("logs.txt");
+
+  // Create the directory if it doesn't exist
+  match std::fs::create_dir_all(&output_dir) {
+    Ok(_) => (),
+    Err(e) => return Err(tauri::InvokeError::from(e.to_string())),
+  };
+
+  // Create the file if it doesn't exist
+  match std::fs::OpenOptions::new()
+    .write(true)
+    .create(true)
+    .open(&output_file) {
+    Ok(_) => (),
+    Err(e) => return Err(tauri::InvokeError::from(e.to_string())),
+  };
 
   let mut child = Command::new("sh")
     .arg("-c")
-    .arg(format!("./celestia light start 2>&1 | tee {}", output_file))
+    .arg(format!("./celestia light start 2>&1 | tee {}", output_file.to_str().unwrap()))
     .stdout(Stdio::piped())
     .spawn()
     .map_err(|e| tauri::InvokeError::from(e.to_string()))?;
