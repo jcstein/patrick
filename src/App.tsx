@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import celestiaLogo from "./assets/celestia.svg";
 import "./App.css";
 
@@ -9,11 +9,13 @@ interface AppProps {
   celestiaStart: () => void;
   celestiaStop: () => void;
   clearLogs: () => void;
+  isRunning: boolean;
 }
 
-const App: React.FC<AppProps> = ({ celestiaLogs, celestiaVersion, celestiaInit, celestiaStart, celestiaStop, clearLogs }) => {
+const App: React.FC<AppProps> = ({ celestiaLogs, celestiaVersion, celestiaInit, celestiaStart, celestiaStop, clearLogs, isRunning }) => {
 
   const logsContainerRef = useRef<HTMLDivElement | null>(null);
+  const [activeTab, setActiveTab] = useState('logs'); // Add this line
 
   useEffect(() => {
     setTimeout(() => {
@@ -23,23 +25,8 @@ const App: React.FC<AppProps> = ({ celestiaLogs, celestiaVersion, celestiaInit, 
     }, 0);
   }, [celestiaLogs]);
 
-  const handleTabClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    // Hide all tab contents
-    let tabContents = document.querySelectorAll('div[id]');
-    tabContents.forEach(tabContent => {
-      (tabContent as HTMLElement).style.display = 'none';
-    });
-
-    // Show the clicked tab's content
-    let tabContent;
-    if ((event.target as HTMLElement).getAttribute('href')) {
-      tabContent = document.querySelector((event.target as HTMLElement).getAttribute('href')!);
-    } else {
-      tabContent = document.querySelector('#' + (event.target as HTMLElement).id.replace('-button', ''));
-    }
-    (tabContent as HTMLElement).style.display = 'block';
+  const handleTabClick = (tabName: string) => { // Modify this function
+    setActiveTab(tabName);
   };
 
   return (
@@ -67,15 +54,18 @@ const App: React.FC<AppProps> = ({ celestiaLogs, celestiaVersion, celestiaInit, 
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '20px' }}>
-        <button id="logs-button" style={{ marginRight: '10px' }} onClick={handleTabClick}>Logs</button>
-        <button id="stats-button" style={{ marginRight: '10px' }} onClick={handleTabClick}>Stats</button>
+        {isRunning && (activeTab === 'logs' ? 
+          <button id="stats-button" style={{ marginRight: '10px' }} onClick={() => handleTabClick('stats')}>Show Stats</button>
+          :
+          <button id="logs-button" style={{ marginRight: '10px' }} onClick={() => handleTabClick('logs')}>Show Logs</button>
+        )}
       </div>
       
-      <div id="logs" ref={logsContainerRef} style={{ width: '100%', height: '50vh', overflow: 'auto', whiteSpace: 'pre-wrap', overflowY: 'auto', resize: 'vertical', textAlign: 'left' }}>
+      <div id="logs" ref={logsContainerRef} style={{ width: '100%', height: '50vh', overflow: 'auto', whiteSpace: 'pre-wrap', overflowY: 'auto', resize: 'vertical', textAlign: 'left', display: activeTab === 'logs' ? 'block' : 'none' }}>
         <pre id="celestia-logs">{celestiaLogs.join('\n')}</pre>
       </div>
     
-      <div id="stats" style={{ display: 'none' }}>
+      <div id="stats" style={{ display: activeTab === 'stats' ? 'block' : 'none' }}>
         <p>stats</p>
       </div>
     </div>

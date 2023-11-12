@@ -56,7 +56,7 @@ function Main() {
     setCelestiaLogs(prevLogs => [...prevLogs, `Stopping Celestia light node...\n${message}\n`]);
   }, []);
 
-  return <App celestiaLogs={celestiaLogs} celestiaVersion={celestiaVersion} celestiaInit={celestiaInit} celestiaStart={celestiaStart} celestiaStop={celestiaStop} clearLogs={() => setCelestiaLogs([])} />;}
+  return <App celestiaLogs={celestiaLogs} celestiaVersion={celestiaVersion} celestiaInit={celestiaInit} celestiaStart={celestiaStart} celestiaStop={celestiaStop} clearLogs={() => setCelestiaLogs([])} isRunning={isRunning} />;}
 
 ReactDOM.render(
   <React.StrictMode>

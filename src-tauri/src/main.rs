@@ -71,7 +71,7 @@ fn celestia_start() -> Result<String, tauri::InvokeError> {
 
   let mut child = Command::new("sh")
     .arg("-c")
-    .arg(format!("./celestia light start 2>&1 | tee {}", output_file.to_str().unwrap()))
+    .arg(format!("./celestia light start --core.ip rpc.celestia.pops.one 2>&1 | tee {}", output_file.to_str().unwrap()))
     .stdout(Stdio::piped())
     .spawn()
     .map_err(|e| tauri::InvokeError::from(e.to_string()))?;
