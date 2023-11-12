@@ -1,5 +1,7 @@
 # Tauri + React + Typescript
 
+> This project has moved to [@jcstein/node-app](https://github.com/jcstein/node-app).
+
 This template should help get you started developing with Tauri, React and Typescript in Vite.
 
 ## Recommended IDE Setup
